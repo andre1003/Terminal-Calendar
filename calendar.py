@@ -1,6 +1,6 @@
 months = {
     1: ['January', 31],
-    2: ['February', 20],
+    2: ['February', 28],
     3: ['March', 31],
     4: ['April', 30],
     5: ['May', 31],
@@ -28,6 +28,7 @@ holidays = {
     12: {25, 'Christmas Day'}
 }
 
+
 def print_calendar(current_date):
     days = months[current_date.month][1]
 
@@ -52,7 +53,7 @@ def print_calendar(current_date):
     calendar = weekday*'    '
     line = 1
 
-    for i in range(1, days):
+    for i in range(1, days + 1):
         holiday = False
         if line != 7:
             line+=1
@@ -74,5 +75,87 @@ def print_calendar(current_date):
 
         holiday = False
 
-    calendar += '\n'
     print(calendar)
+
+
+def insert_db(date):
+    date += '\n'
+
+    try:
+        file = open('events.txt', 'r')
+        content = file.readlines()
+        
+        content.append(date)
+        file = open('events.txt', 'w')
+        file.writelines(content)
+
+        file.close()
+
+    except:
+        file = open('events.txt', 'w')
+        file.write(date)
+        file.close()
+
+
+def add_event(current_date):
+    while True:
+        date = input("Insert the event's date (dd/mm/yyyy) (type 'c' to go back to menu): ")
+        if date == 'c':
+            return False
+
+        event = validate_date(date, current_date)
+        if not event:
+            print('Invalid date! Try again, please.')
+
+        else:
+            confirm = input(f'The date is {event[0]:02d}/{event[1]:02d}/{event[2]:04d}? [y/n] (y): ')
+
+            if confirm == 'y' or not confirm:
+                # Date confirmed
+                insert_db(f'{event[0]}/{event[1]}/{event[2]}')
+                return True
+
+
+def validate_date(date, current_date):
+    date = date.split('/')
+    if len(date) != 3:
+        return None
+
+    try:
+        day = int(date[0])
+        month = int(date[1])
+        year = int(date[2])
+
+    except:
+        return None
+
+    if year >= current_date.year + 60 or month < 1 or month > 12 or day < 1 or day > months[month][1]:
+        return None
+
+    if year < current_date.year:
+        return None
+    elif year > current_date.year:
+        return [day, month, year]
+    else:
+        if month < current_date.month:
+            return None
+        elif month > current_date.month:
+            return [day, month, year]
+        else:
+            if day <= current_date.day:
+                return None
+            elif day > current_date.day:
+                return [day, month, year]
+
+
+def print_dates():
+    try:
+        file = open('events.txt', 'r')
+        events = file.readlines()
+
+        for event in events:
+            print(event)
+
+        file.close()
+    except:
+        print('There is no event saved yet :/')
