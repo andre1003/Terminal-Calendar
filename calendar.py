@@ -51,7 +51,10 @@ def print_calendar(current_date):
     print(' \033[31mS\033[m   M   T   W   T   F   \033[32mS\033[m')
 
     calendar = weekday*'    '
+    comment = ''
     line = 1
+
+    events = get_events(current_date.month, current_date.year)
 
     for i in range(1, days + 1):
         holiday = False
@@ -63,10 +66,19 @@ def print_calendar(current_date):
             calendar += f'\n'
 
         for j in holidays[current_date.month]:
-            if i == j:
+            if i == j and i != current_date.day:
                 calendar += f' \033[7;33m{i:02d}\033[m '
                 holiday = True
                 break
+
+        if events:
+            for j in events:
+                if i == j and i != current_date.day:
+                    calendar += f' \033[7;36m{i:02d}\033[m '
+                    holiday = True
+                    break
+                elif i == j:
+                    comment = 'Today is an event day!'
 
         if i == current_date.day and holiday == False:
             calendar += f' \033[7m{i:02d}\033[m '
@@ -75,26 +87,56 @@ def print_calendar(current_date):
 
         holiday = False
 
-    print(calendar)
+    print(calendar + '\n')
+    if comment:
+        print(comment + '\n')
 
 
-def insert_db(date):
-    date += '\n'
-
+def get_events(current_month, current_year):
     try:
         file = open('events.txt', 'r')
         content = file.readlines()
         
-        content.append(date)
-        file = open('events.txt', 'w')
+        file.close()
+
+        events = list()
+        for item in content:
+            item = item.replace('\n', '')
+            
+            item = item.split('/')
+            item = list(map(int, item))
+            if item[2] == current_year:
+                
+                if item[1] == current_month:
+                    events.append(item[0])
+
+        return events
+
+    except:
+        return None
+
+
+def file_insertion(filename, data):
+    try:
+        file = open(filename, 'r')
+        content = file.readlines()
+        
+        content.append(data)
+        file = open(filename, 'w')
         file.writelines(content)
 
         file.close()
 
     except:
-        file = open('events.txt', 'w')
-        file.write(date)
+        file = open(filename, 'w')
+        file.write(data)
         file.close()
+
+
+def insert_db(date, description):
+    date += '\n'
+    file_insertion('events.txt', date)
+    file_insertion('descriptions.txt', description)
 
 
 def add_event(current_date):
@@ -108,12 +150,41 @@ def add_event(current_date):
             print('Invalid date! Try again, please.')
 
         else:
+            description = input('Type a description for this event: ')
             confirm = input(f'The date is {event[0]:02d}/{event[1]:02d}/{event[2]:04d}? [y/n] (y): ')
 
             if confirm == 'y' or not confirm:
                 # Date confirmed
-                insert_db(f'{event[0]}/{event[1]}/{event[2]}')
+                insert_db(f'{event[0]}/{event[1]}/{event[2]}', description)
                 return True
+
+
+def delete_event():
+    try:
+        file = open('events.txt', 'r')
+        content = file.readlines()
+        
+        i = 1
+        for item in content:
+            print(f'{i} - {item}')
+            i+=1
+
+        op = int(input('Which event you want to delete? '))
+
+        while op > len(content) or op <= 0:
+            op = int(input('Invalid option, try again: '))
+        
+        del(content[op-1])
+
+        file = open('events.txt', 'w')
+        file.writelines(content)
+
+        file.close()
+
+        print('Event successfully deleted!')
+
+    except:
+        print('Something wrong happened with events file :/')
 
 
 def validate_date(date, current_date):
@@ -148,14 +219,40 @@ def validate_date(date, current_date):
                 return [day, month, year]
 
 
-def print_dates():
+def import_events(filename):
+    filename += '.txt'
     try:
-        file = open('events.txt', 'r')
-        events = file.readlines()
-
-        for event in events:
-            print(event)
-
+        file = open(filename, 'r')
         file.close()
+
+        config = open('config.cfg', 'r')
+        content = config.readlines()
+
+        content.append(filename + '\n')
+        config = open('config.cfg', 'w')
+        config.writelines(content)
+
+        config.close()
+
+    except:
+        print("The file doesn't exist!")
+
+
+def print_events():
+    try:
+        date = open('events.txt', 'r')
+        dates = date.readlines()
+        date.close()
+
+        description = open('descriptions.txt', 'r')
+        descriptions = description.readlines()
+        description.close()
+        
+        end = len(dates)
+        for i in range(0, end):
+            dates[i] = dates[i].replace('\n', '')
+            print(f'{dates[i]} - {descriptions[i]}')
+
+        
     except:
         print('There is no event saved yet :/')
