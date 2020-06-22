@@ -14,18 +14,18 @@ months = {
 }
 
 holidays = {
-    1: {1, 'New Year'},
+    1: {1: 'New Year'},
     2: {},
     3: {},
-    4: {21, 'Tiradentes'},
-    5: {1, "Labour Day"},
-    6: {11, 'Corpus Christi'},
+    4: {21: 'Tiradentes'},
+    5: {1: "Labour Day"},
+    6: {11: 'Corpus Christi'},
     7: {},
     8: {},
-    9: {7, 'Independence Day'},
-    10: {12, 'Lady of Aparecida'},
+    9: {7: 'Independence Day'},
+    10: {12: 'Lady of Aparecida'},
     11: {2: "All Souls' Day", 15: 'Republic Day'},
-    12: {25, 'Christmas Day'}
+    12: {25: 'Christmas Day'}
 }
 
 
@@ -56,6 +56,7 @@ def print_calendar(current_date):
 
     events = get_events(current_date.month, current_date.year)
 
+    has_holiday = False
     for i in range(1, days + 1):
         holiday = False
         if line != 7:
@@ -69,6 +70,7 @@ def print_calendar(current_date):
             if i == j and i != current_date.day:
                 calendar += f' \033[7;33m{i:02d}\033[m '
                 holiday = True
+                has_holiday = True
                 break
 
         if events:
@@ -88,6 +90,15 @@ def print_calendar(current_date):
         holiday = False
 
     print(calendar + '\n')
+
+    if has_holiday:
+        print('Holiday(s):')
+        aux = holidays[current_date.month]
+        for i in aux:
+            print(f'Day {i} - {aux[i]}')
+
+        print()
+
     if comment:
         print(comment + '\n')
 
@@ -135,6 +146,7 @@ def file_insertion(filename, data):
 
 def insert_db(date, description):
     date += '\n'
+    description += '\n'
     file_insertion('events.txt', date)
     file_insertion('descriptions.txt', description)
 
