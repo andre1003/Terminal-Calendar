@@ -19,14 +19,14 @@ options = {
 
 new_event = False
 
+clear()
+print('Hello! Wellcome to Terminal Calendar!\n\n')
 
 while True:
-    clear()
+    
     if new_event:
         print('Event saved successfully!')
         new_event = False
-
-    print('Hello! Wellcome to Terminal Calendar!\n\n')
 
     current_date = datetime.now()
 
@@ -58,3 +58,5 @@ while True:
     elif choice == 0:
         clear()
         break
+
+    clear()

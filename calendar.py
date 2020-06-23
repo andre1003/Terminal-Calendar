@@ -1,3 +1,4 @@
+# Static variables
 months = {
     1: ['January', 31],
     2: ['February', 28],
@@ -30,6 +31,18 @@ holidays = {
 
 
 def print_calendar(current_date):
+    '''
+    :Params:
+        current_date
+    
+    :Return:
+        Nothing
+
+    :Description:
+        This functions prints the calendar on terminal,
+        marking the current day, events and holidays.
+    '''
+
     days = months[current_date.month][1]
 
     day = current_date.day
@@ -104,6 +117,18 @@ def print_calendar(current_date):
 
 
 def get_events(current_month, current_year):
+    '''
+    :Params:
+        current_month, current_year
+
+    :Return:
+        List of events or None
+
+    :Description:
+        This function gets all events of current month from the
+        events file. If no event was found, return None.
+    '''
+
     try:
         file = open('events.txt', 'r')
         content = file.readlines()
@@ -128,6 +153,17 @@ def get_events(current_month, current_year):
 
 
 def file_insertion(filename, data):
+    '''
+    :Params:
+        filename, data
+
+    :Return:
+        Nothing
+
+    :Description:
+        This function insert some data on an specific file.
+    '''
+
     try:
         file = open(filename, 'r')
         content = file.readlines()
@@ -145,6 +181,18 @@ def file_insertion(filename, data):
 
 
 def insert_db(date, description):
+    '''
+    :Params:
+        date, description
+
+    :Return:
+        Nothing
+
+    :Description:
+        This function prepare event data to be inserted on
+        respective file.
+    '''
+
     date += '\n'
     description += '\n'
     file_insertion('events.txt', date)
@@ -152,6 +200,19 @@ def insert_db(date, description):
 
 
 def add_event(current_date):
+    '''
+    :Params:
+        current_date
+
+    :Return:
+        True or False
+
+    :Description:
+        This function add a new event, making the respective validations
+        and return True if event is successfully inserted in file or False
+        if operations has been canceled.
+    '''
+
     while True:
         date = input("Insert the event's date (dd/mm/yyyy) (type 'c' to go back to menu): ")
         if date == 'c':
@@ -172,25 +233,47 @@ def add_event(current_date):
 
 
 def delete_event():
+    '''
+    :Params:
+        Nothing
+
+    :Return:
+        Nothing
+
+    :Description:
+        This function show the options for deletion and remove
+        what user chose.
+    '''
+
     try:
         file = open('events.txt', 'r')
-        content = file.readlines()
+        dates = file.readlines()
+        file.close()
+
+        file = open('descriptions.txt', 'r')
+        descriptions = file.readlines()
+        file.close()
         
         i = 1
-        for item in content:
+        for item in dates:
             print(f'{i} - {item}')
             i+=1
 
         op = int(input('Which event you want to delete? '))
 
-        while op > len(content) or op <= 0:
+        while op > len(dates) or op <= 0:
             op = int(input('Invalid option, try again: '))
+
         
-        del(content[op-1])
+        del(dates[op-1])
+        del(descriptions[op-1])
 
         file = open('events.txt', 'w')
-        file.writelines(content)
+        file.writelines(dates)
+        file.close()
 
+        file = open('descriptions.txt', 'w')
+        file.writelines(descriptions)
         file.close()
 
         print('Event successfully deleted!')
@@ -200,6 +283,18 @@ def delete_event():
 
 
 def validate_date(date, current_date):
+    '''
+    :Params:
+        date, current_date
+
+    :Return:
+        List with date (splitted) or None
+
+    :Description:
+        This function makes date validation, returning a list splitted by [day, month, year]
+        or None, if date is invalid.
+    '''
+
     date = date.split('/')
     if len(date) != 3:
         return None
@@ -232,6 +327,17 @@ def validate_date(date, current_date):
 
 
 def import_events(filename):
+    '''
+    :Params:
+        filename
+
+    :Return:
+        Nothing
+
+    :Description:
+        This function import an event file to configuration file.
+    '''
+
     filename += '.txt'
     try:
         file = open(filename, 'r')
@@ -251,6 +357,17 @@ def import_events(filename):
 
 
 def print_events():
+    '''
+    :Params:
+        Nothing
+
+    :Return:
+        Nothing
+
+    :Description:
+        This function get all events and print then on screen.
+    '''
+
     try:
         date = open('events.txt', 'r')
         dates = date.readlines()
