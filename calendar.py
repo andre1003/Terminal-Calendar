@@ -385,3 +385,39 @@ def print_events():
         
     except:
         print('There is no event saved yet :/')
+
+
+from dateutil.relativedelta import *
+from datetime import datetime
+
+# use_date = datetime.now()
+# print(f'This month weekday (today): {use_date.weekday()}')
+
+# use_date = use_date+relativedelta(months=+1)
+# use_date = use_date+relativedelta(day=1)
+
+# print(f'Next month weekday (today): {use_date.weekday()}')
+def calculate_date(option):
+    if option == 1:
+        date = datetime.now()
+        date = date + relativedelta(months=+1)
+        date = date + relativedelta(day=1)
+        print_calendar(date)
+
+    else:
+        pass
+
+
+def OnKeyPress(event):
+    if event.Key == 'Left':
+        calculate_date(1)
+            
+
+import pyxhook
+def navigate():
+    hm = pyxhook.HookManager()
+    hm.KeyDown = OnKeyPress
+
+    hm.HookKeyboard()
+
+    hm.start()

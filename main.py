@@ -14,6 +14,7 @@ options = {
     2: 'Show events',
     3: 'Delete event',
     4: 'Import events (from an .txt file)',
+    5: 'Navigate',
     0: 'Exit'
 }
 
@@ -54,6 +55,9 @@ while True:
         calendar.import_events(filename)
         print('File successfully imported!')
         input('\nType anything to continue...')
+
+    elif choice == 5:
+        calendar.navigate()
         
     elif choice == 0:
         clear()
