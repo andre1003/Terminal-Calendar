@@ -65,7 +65,7 @@ def print_calendar(current_date):
 
     calendar = weekday*'    '
     comment = ''
-    line = 1
+    line = weekday
 
     events = get_events(current_date.month, current_date.year)
 
@@ -389,6 +389,7 @@ def print_events():
 
 from dateutil.relativedelta import *
 from datetime import datetime
+import pyxhook
 
 # use_date = datetime.now()
 # print(f'This month weekday (today): {use_date.weekday()}')
@@ -402,6 +403,7 @@ def calculate_date(option):
         date = datetime.now()
         date = date + relativedelta(months=+1)
         date = date + relativedelta(day=1)
+        print()
         print_calendar(date)
 
     else:
@@ -409,11 +411,11 @@ def calculate_date(option):
 
 
 def OnKeyPress(event):
-    if event.Key == 'Left':
+    
+    if event.Key == 'Right':
         calculate_date(1)
             
 
-import pyxhook
 def navigate():
     hm = pyxhook.HookManager()
     hm.KeyDown = OnKeyPress

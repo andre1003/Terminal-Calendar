@@ -3,7 +3,7 @@
 # but also user friendly
 
 from datetime import datetime
-import calendar
+import functions
 import os
 
 def clear():
@@ -31,7 +31,7 @@ while True:
 
     current_date = datetime.now()
 
-    calendar.print_calendar(current_date)
+    functions.print_calendar(current_date)
 
     for op in options:
         print(f'{op} - {options[op]}')
@@ -40,24 +40,24 @@ while True:
     print()
 
     if choice == 1:
-        new_event = calendar.add_event(current_date)
+        new_event = functions.add_event(current_date)
     
     elif choice == 2:
-        calendar.print_events()
+        functions.print_events()
         input('\nType anything to continue...')
 
     elif choice == 3:
-        calendar.delete_event()
+        functions.delete_event()
         input('\nType anything to continue...')
 
     elif choice == 4:
         filename = input('Type the filename (without .txt): ')
-        calendar.import_events(filename)
+        functions.import_events(filename)
         print('File successfully imported!')
         input('\nType anything to continue...')
 
     elif choice == 5:
-        calendar.navigate()
+        functions.navigate()
         
     elif choice == 0:
         clear()
