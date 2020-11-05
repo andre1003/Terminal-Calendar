@@ -1,14 +1,17 @@
 # This is a terminal calendar made with python,
 # so the idea is to keep it simple and workfull,
 # but also user friendly
-
+'''
+    Imports
+'''
 from datetime import datetime
 import functions
 import os
+import sys
 
-def clear():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
+'''
+    Static variables
+'''
 options = {
     1: 'Add new event',
     2: 'Show events',
@@ -18,7 +21,27 @@ options = {
     0: 'Exit'
 }
 
+'''
+    Global variables
+'''
 new_event = False
+
+'''
+    Functions
+'''
+def clear():
+    '''
+    :Params:
+        Nothing
+
+    :Return:
+        Nothing
+    
+    :Description:
+        This function clear the terminal
+    '''
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 
 clear()
 print('Hello! Wellcome to Terminal Calendar!\n\n')
@@ -40,6 +63,7 @@ while True:
     print()
 
     if choice == 1:
+        clear()
         new_event = functions.add_event(current_date)
     
     elif choice == 2:
@@ -47,17 +71,20 @@ while True:
         input('\nType anything to continue...')
 
     elif choice == 3:
+        clear()
         functions.delete_event()
         input('\nType anything to continue...')
 
     elif choice == 4:
+        clear()
         filename = input('Type the filename (without .txt): ')
         functions.import_events(filename)
-        print('File successfully imported!')
         input('\nType anything to continue...')
 
     elif choice == 5:
+        clear()
         functions.navigate()
+        input('\nType anything to continue...')
         
     elif choice == 0:
         clear()

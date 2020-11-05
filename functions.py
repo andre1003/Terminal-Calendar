@@ -1,4 +1,21 @@
-# Static variables
+'''
+    Imports
+'''
+
+import os
+from dateutil.relativedelta import *
+from datetime import datetime
+import pyxhook
+
+'''
+    Global variables
+'''
+end = False
+index = 0
+
+'''
+Static variables
+'''
 months = {
     1: ['January', 31],
     2: ['February', 28],
@@ -29,7 +46,9 @@ holidays = {
     12: {25: 'Christmas Day'}
 }
 
-
+'''
+    Functions
+'''
 def print_calendar(current_date):
     '''
     :Params:
@@ -132,7 +151,6 @@ def get_events(current_month, current_year):
     try:
         file = open('events.txt', 'r')
         content = file.readlines()
-        
         file.close()
 
         events = list()
@@ -351,6 +369,7 @@ def import_events(filename):
         config.writelines(content)
 
         config.close()
+        print('File successfully imported!')
 
     except:
         print("The file doesn't exist!")
@@ -373,6 +392,9 @@ def print_events():
         dates = date.readlines()
         date.close()
 
+        if not dates:
+            raise Exception()
+
         description = open('descriptions.txt', 'r')
         descriptions = description.readlines()
         description.close()
@@ -387,39 +409,95 @@ def print_events():
         print('There is no event saved yet :/')
 
 
-from dateutil.relativedelta import *
-from datetime import datetime
-import pyxhook
-
-# use_date = datetime.now()
-# print(f'This month weekday (today): {use_date.weekday()}')
-
-# use_date = use_date+relativedelta(months=+1)
-# use_date = use_date+relativedelta(day=1)
-
-# print(f'Next month weekday (today): {use_date.weekday()}')
 def calculate_date(option):
-    if option == 1:
-        date = datetime.now()
-        date = date + relativedelta(months=+1)
-        date = date + relativedelta(day=1)
-        print()
-        print_calendar(date)
+    '''
+    :Params:
+        option
+
+    :Return:
+        Nothing
+
+    :Description:
+        This function change the calendar, going foward with right arrow and backward with left arrow
+    '''
+
+    global index
+
+    print('Right Arrow - Move foward\nLeft Arrow - Move backward\nUp Arrow - Main Menu\n\n')
+
+    if option == 1: # Go foward
+        index+=1
+
+    elif option == -1: # Go backward
+        index-=1
 
     else:
         pass
 
+    date = datetime.now() # Get current date
+    date = date + relativedelta(months=index) # Increase or decrease to the wanted date
+    date = date + relativedelta(day=1) # Go to first day of that month
+    print()
+    print_calendar(date) # Print the respective calendar
 
 def OnKeyPress(event):
-    
-    if event.Key == 'Right':
+    '''
+    :Params:
+        event
+
+    :Return:
+        Nothing
+
+    :Description:
+        This function just calls calculate_date() with the right params, considering the key, or set end variable
+        as True, indicating that the program has to stop analyzing keyboard
+    '''
+
+    global end
+
+    os.system('cls' if os.name == 'nt' else 'clear') # Clear screen
+
+    if event.Key == 'Right': # Right button
         calculate_date(1)
-            
+
+    elif event.Key == 'Left': # Left button
+        calculate_date(-1)
+
+    elif event.Key == 'Up': # Up button
+        end = True
+
 
 def navigate():
+    '''
+    :Params:
+        Nothing
+    
+    :Return:
+        Nothing
+
+    :Description:
+        This function start analyzing keyboard input and stops when end variable is set to True
+    '''
+
+    global end
+    global index
+
+    # Reseting variables
+    end = 0
+    index = 0
+
+    print('Right Arrow - Move foward\nLeft Arrow - Move backward\nUp Arrow - Main Menu\n\n\n')
+    print_calendar(datetime.now()) # Printing current date calendar
+
     hm = pyxhook.HookManager()
     hm.KeyDown = OnKeyPress
-
     hm.HookKeyboard()
 
-    hm.start()
+    hm.start() # Start analyzing keyboard
+
+    # This loop is necessary because we need to wait
+    # until end variable still False
+    while not end:
+        pass
+
+    hm.cancel() # Stop analyzing keyboard
