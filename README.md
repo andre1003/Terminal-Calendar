@@ -1,6 +1,8 @@
 # Terminal Calendar
 A calendar for terminals made with Python.
 
+<img src="src/print.png">
+
 ## How to Install?
 You only have to install the packages on ```requirements.txt```. So you will need:
 
